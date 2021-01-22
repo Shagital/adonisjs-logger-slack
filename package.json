@@ -1,6 +1,6 @@
 {
   "name": "@shagital/adonisjs-logger-slack",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Slack driver for Adonis Logger",
   "main": "index.js",
   "scripts": {
