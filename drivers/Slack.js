@@ -3,7 +3,7 @@
 const Env = require('@adonisjs/framework/src/Env')
 const _ = require('lodash')
 const Winston = require('winston')
-const SlackHook = require("winston-slack-webhook-transport");
+const SlackHook = require('winston-slack-webhook-transport')
 
 /**
  * Winston console transport driver for @ref('Logger')
@@ -13,7 +13,6 @@ const SlackHook = require("winston-slack-webhook-transport");
  * @constructor
  */
 class Slack {
-
   /**
    * Set config. This method is called by Logger
    * manager by set config based upon the
@@ -23,13 +22,13 @@ class Slack {
    *
    * @param  {Object}  config
    */
-  setConfig({
+  setConfig ({
     name = Env.get('APP_NAME', 'adonis-app'),
     driver = 'slack',
     webhookUrl = Env.get('SLACK_WEBHOOK_URL'),
     level = 'info'
   }) {
-    this.config = { name, driver, webhookUrl, level };
+    this.config = { name, driver, webhookUrl, level }
 
     /**
      * Creating new instance of winston with slack transport
@@ -41,52 +40,50 @@ class Slack {
           webhookUrl: this.config.webhookUrl,
           name: this.config.name,
           formatter: (info) => {
+            let { message, request = {} } = info
 
-            let { message, request = {}} = info;
+            delete info.message
+            delete info.request
+            delete info.level
 
-            delete info.message;
-            delete info.request;
-            delete info.level;
+            let requestAll = typeof request.all === 'function' ? request.all() : null
+            let requestHeaders = typeof request.all === 'function' ? request.headers() : null
 
-            let requestAll = typeof request.all === 'function' ? request.all() : null;
-            let requestHeaders = typeof request.all === 'function' ? request.headers() : null;
-
-            let payload = {};
+            let payload = {}
 
             if (typeof message === 'object') {
               // if an exception was passed
-              payload.text = "*" + level.toUpperCase() + " ["+process.env.NODE_ENV+"]: * _" + message.name + "_ - " + message.message;
-              payload.text += "\n>```" + message.stack + "```";
+              payload.text = '*' + level.toUpperCase() + ' [' + process.env.NODE_ENV + ']: * _' + message.name + '_ - ' + message.message
+              payload.text += '\n>```' + message.stack + '```'
             } else {
               // if a string was passed
-              payload.text = `*${level.toUpperCase()} [${process.env.NODE_ENV}] :* ${message.toString()};
+              payload.text = `*${level.toUpperCase()} [${process.env.NODE_ENV}] :* ${message.toString()}`
             }
 
             if (requestAll) {
               // let's log the request object if available
-              payload.text += "\n*" + request?.method() + "*: `" + request?.url() + "` \n>```";
-              payload.text += JSON.stringify(requestAll, null, 4) + "```";
+              payload.text += '\n*' + request.method() + '*: `' + request.url() + '` \n>```'
+              payload.text += JSON.stringify(requestAll, null, 4) + '```'
             }
             if (requestHeaders) {
               // let's log the request header if available
-              payload.text += "\n*HEADERS: *\n>```" + JSON.stringify(requestHeaders, null, 4) + "```";
+              payload.text += '\n*HEADERS: *\n>```' + JSON.stringify(requestHeaders, null, 4) + '```'
             }
             if (Object.keys(info).length) {
               // log any other properties passed
-              payload.text += "\n*Extra: *\n>```" + JSON.stringify(info, null, 4) + "```";
+              payload.text += '\n*Extra: *\n>```' + JSON.stringify(info, null, 4) + '```'
             }
 
-            return payload;
+            return payload
           }
         })
       ]
-    });
+    })
 
     /**
      * Updating winston levels with syslog standard levels.
      */
     this.logger.setLevels(this.levels)
-
   }
 
   /**
@@ -96,7 +93,7 @@ class Slack {
    *
    * @return {Object}
    */
-  get levels() {
+  get levels () {
     return {
       emerg: 0,
       alert: 1,
@@ -116,7 +113,7 @@ class Slack {
    *
    * @return {String}
    */
-  get level() {
+  get level () {
     return this.logger.transports[this.config.name].level
   }
 
@@ -127,7 +124,7 @@ class Slack {
    *
    * @return {void}
    */
-  set level(level) {
+  set level (level) {
     this.logger.transports[this.config.name].level = level
   }
 
@@ -142,7 +139,7 @@ class Slack {
    *
    * @return {void}
    */
-  log(level, msg, ...meta) {
+  log (level, msg, ...meta) {
     const levelName = _.findKey(this.levels, (num) => {
       return num === level
     })
