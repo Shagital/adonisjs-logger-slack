@@ -55,7 +55,7 @@ class Slack {
 
             if (typeof message === 'object') {
               // if an exception was passed
-              payload.text = "*" + level.toUpperCase() + "["+process.env.NODE_ENV+"]: * _" + message.name + "_ - " + message.message;
+              payload.text = "*" + level.toUpperCase() + " ["+process.env.NODE_ENV+"]: * _" + message.name + "_ - " + message.message;
               payload.text += "\n>```" + message.stack + "```";
             } else {
               // if a string was passed
