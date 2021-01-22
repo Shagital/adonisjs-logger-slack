@@ -59,7 +59,7 @@ class Slack {
               payload.text += "\n>```" + message.stack + "```";
             } else {
               // if a string was passed
-              payload.text = message.toString();
+              payload.text = `*${level.toUpperCase()} [${process.env.NODE_ENV}] :* ${message.toString()};
             }
 
             if (requestAll) {
