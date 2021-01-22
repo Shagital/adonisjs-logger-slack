@@ -13,6 +13,8 @@ You can install the package via NPM:
 Or with yarn
 
 `yarn add @shagital/adonisjs-logger-slack`
+Or with adonis
+`adonis install @shagital/adonisjs-logger-slack`
 
 ### Registering provider
 
