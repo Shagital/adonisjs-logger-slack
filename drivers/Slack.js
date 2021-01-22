@@ -48,8 +48,8 @@ class Slack {
             delete info.request;
             delete info.level;
 
-            let requestAll = request.all?.();
-            let requestHeaders = request.headers?.();
+            let requestAll = typeof request.all === 'function' ? request.all() : null;
+            let requestHeaders = typeof request.all === 'function' ? request.headers() : null;
 
             let payload = {};
 
