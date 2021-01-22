@@ -7,13 +7,11 @@ This repo is based from https://github.com/pirmax/adonis-logger-rollbar
 
 ## Usage
 ## Installation
-You can install the package via NPM:
-
+- You can install the package via NPM:
 `npm install @shagital/adonisjs-logger-slack`
-Or with yarn
-
+- Or with yarn:
 `yarn add @shagital/adonisjs-logger-slack`
-Or with adonis
+- Or with adonis:
 `adonis install @shagital/adonisjs-logger-slack`
 
 ### Registering provider
@@ -44,6 +42,7 @@ That's it! Now you can use Logger that will send data to Rollbar.
 const Logger = use('Logger')
 
 Logger.info('Test message')
+Logger.info('Test message', {user}) // to log extra details
 
 ```
 
