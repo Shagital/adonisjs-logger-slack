@@ -59,13 +59,20 @@ class Slack {
               payload.text += '\n>```' + message.stack + '```'
             } else {
               // if a string was passed
+              let messageString = message.toString();
+
+              if (messageString == 'serving app on http://%s:%s') {
+                messageString = this.formatString(messageString, ['%s', '%s'], [process.env.HOST, process.env.PORT])
+              }
               // if user doesn't want app start to be logged
-              if (!this.config.appStart && message.toString() == 'serving app on http://%s:%s') {
+              if (!this.config.appStart) {
                 // log to console so user knows app has started
-                console.log(`${level.toUpperCase()} [${process.env.NODE_ENV}] : ${message.toString()}`)
+                console.log(`${level.toUpperCase()} [${process.env.NODE_ENV}] : ${messageString}`)
+                // exit so we don't log to slack
                 process.exit();
               }
-              payload.text = `*${level.toUpperCase()} [${process.env.NODE_ENV}] :* ${message.toString()}`
+
+              payload.text = `*${level.toUpperCase()} [${process.env.NODE_ENV}] :* ${messageString}`
             }
 
             if (requestAll) {
@@ -73,10 +80,12 @@ class Slack {
               payload.text += '\n*' + request.method() + '*: `' + request.url() + '` \n>```'
               payload.text += JSON.stringify(requestAll, null, 4) + '```'
             }
+
             if (requestHeaders) {
               // let's log the request header if available
               payload.text += '\n*HEADERS: *\n>```' + JSON.stringify(requestHeaders, null, 4) + '```'
             }
+
             if (Object.keys(info).length) {
               // log any other properties passed
               payload.text += '\n*Extra: *\n>```' + JSON.stringify(info, null, 4) + '```'
@@ -92,6 +101,14 @@ class Slack {
      * Updating winston levels with syslog standard levels.
      */
     this.logger.setLevels(this.levels)
+  }
+
+  formatString(string, search, replacement) {
+    for (let i in search) {
+      string = string.replace(search[i], replacement[i])
+    }
+
+    return string;
   }
 
   /**
