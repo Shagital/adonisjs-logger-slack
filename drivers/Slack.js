@@ -23,7 +23,7 @@ class Slack {
    *
    * @param  {Object}  config
    */
-  setConfig ({
+  setConfig({
     name = Config.get('app.logger.slack.driver', 'adonis-app'),
     driver = Config.get('app.logger.slack.driver', 'slack'),
     webhookUrl = Config.get('app.logger.slack.webhookUrl', Env.get('SLACK_WEBHOOK_URL')),
@@ -60,7 +60,9 @@ class Slack {
             } else {
               // if a string was passed
               // if user doesn't want app start to be logged
-              if(!this.config.appStart && message.toString() == 'serving app on http://%s:%s') {
+              if (!this.config.appStart && message.toString() == 'serving app on http://%s:%s') {
+                // log to console so user knows app has started
+                console.log(`${level.toUpperCase()} [${process.env.NODE_ENV}] : ${message.toString()}`)
                 process.exit();
               }
               payload.text = `*${level.toUpperCase()} [${process.env.NODE_ENV}] :* ${message.toString()}`
@@ -99,7 +101,7 @@ class Slack {
    *
    * @return {Object}
    */
-  get levels () {
+  get levels() {
     return {
       emerg: 0,
       alert: 1,
@@ -119,7 +121,7 @@ class Slack {
    *
    * @return {String}
    */
-  get level () {
+  get level() {
     return this.logger.transports[this.config.name].level
   }
 
@@ -130,7 +132,7 @@ class Slack {
    *
    * @return {void}
    */
-  set level (level) {
+  set level(level) {
     this.logger.transports[this.config.name].level = level
   }
 
@@ -145,7 +147,7 @@ class Slack {
    *
    * @return {void}
    */
-  log (level, msg, ...meta) {
+  log(level, msg, ...meta) {
     const levelName = _.findKey(this.levels, (num) => {
       return num === level
     })
