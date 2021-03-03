@@ -68,8 +68,8 @@ class Slack {
               if (!this.config.appStart) {
                 // log to console so user knows app has started
                 console.log(`${level.toUpperCase()} [${process.env.NODE_ENV}] : ${messageString}`)
-                // exit so we don't log to slack
-                process.exit();
+                // exit quietly
+                return ''
               }
 
               payload.text = `*${level.toUpperCase()} [${process.env.NODE_ENV}] :* ${messageString}`
