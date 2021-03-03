@@ -1,6 +1,7 @@
 'use strict'
 
 const Env = require('@adonisjs/framework/src/Env')
+const Config = require('@adonisjs/framework/src/Config')
 const _ = require('lodash')
 const Winston = require('winston')
 const SlackHook = require('winston-slack-webhook-transport')
@@ -23,12 +24,13 @@ class Slack {
    * @param  {Object}  config
    */
   setConfig ({
-    name = Env.get('APP_NAME', 'adonis-app'),
-    driver = 'slack',
-    webhookUrl = Env.get('SLACK_WEBHOOK_URL'),
-    level = 'info'
+    name = Config.get('app.logger.slack.driver', 'adonis-app'),
+    driver = Config.get('app.logger.slack.driver', 'slack'),
+    webhookUrl = Config.get('app.logger.slack.webhookUrl', Env.get('SLACK_WEBHOOK_URL')),
+    level = Config.get('app.logger.slack.level', 'info'),
+    appStart = Config.get('app.logger.slack.appStart', false)
   }) {
-    this.config = { name, driver, webhookUrl, level }
+    this.config = { name, driver, webhookUrl, level, appStart }
 
     /**
      * Creating new instance of winston with slack transport
@@ -57,6 +59,10 @@ class Slack {
               payload.text += '\n>```' + message.stack + '```'
             } else {
               // if a string was passed
+              // if user doesn't want app start to be logged
+              if(!this.config.appStart && message.toString() == 'serving app on http://%s:%s') {
+                process.exit();
+              }
               payload.text = `*${level.toUpperCase()} [${process.env.NODE_ENV}] :* ${message.toString()}`
             }
 

@@ -33,6 +33,7 @@ slack: {
     driver: 'slack',
     webhookUrl: Env.get('SLACK_WEBHOOK_URL'),
     level: 'info',
+    appStart : false // whether to create log when app is starting
 }
 ```
 
