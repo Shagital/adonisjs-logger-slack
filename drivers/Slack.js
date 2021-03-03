@@ -71,7 +71,7 @@ class Slack {
                 console.log(`${level.toUpperCase()} [${process.env.NODE_ENV}] : ${messageString}`);
 
                 // fail quietly
-                return {};
+                return null;
               }
 
               payload.text = `*${level.toUpperCase()} [${process.env.NODE_ENV}] :* ${messageString}`
