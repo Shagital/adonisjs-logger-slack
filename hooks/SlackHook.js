@@ -30,19 +30,19 @@ module.exports = class SlackHook extends Transport {
     }
 
     let layout = this.formatter(info);
+    payload.text = layout && layout.text;
+    payload.attachments = layout && layout.attachments;
+    payload.blocks = layout && layout.blocks;
 
-    if (!layout) {
+    if (!(payload.text || payload.attachments || payload.blocks)) {
       // if nothing passed, don't log
       return callback();
     }
 
     this.axiosInstance.post(this.webhookUrl, payload)
-      .then(response => {
-        this.emit('logged', info);
-        callback();
-      })
       .catch(err => {
-        this.emit('error', err);
+        console.log('slack log', err.toString());
+      }).finally(() => {
         callback();
       });
   }

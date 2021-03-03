@@ -56,8 +56,8 @@ class Slack {
 
             if (typeof message === 'object') {
               // if an exception was passed
-              payload.text = '*' + level.toUpperCase() + ' [' + process.env.NODE_ENV + ']: * _' + message.name + '_ - ' + message.message
-              payload.text += '\n>```' + message.stack + '```'
+              payload.text = '*' + level.toUpperCase() + ' [' + process.env.NODE_ENV + ']: *' + `${message.name} ? ${message.name} : ''}` + ' - ' + message.message
+              if (message.stack) payload.text += '\n>```' + message.stack + '```'
             } else {
               // if a string was passed
               let messageString = message.toString();
@@ -65,6 +65,7 @@ class Slack {
               if (messageString == 'serving app on http://%s:%s') {
                 messageString = this.formatString(messageString, ['%s', '%s'], [process.env.HOST, process.env.PORT])
               }
+
               // if user doesn't want app start to be logged
               if (!this.config.appStart) {
                 // log to console so user knows app has started
