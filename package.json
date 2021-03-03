@@ -1,6 +1,6 @@
 {
   "name": "@shagital/adonisjs-logger-slack",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Slack driver for Adonis Logger",
   "main": "index.js",
   "scripts": {
@@ -23,8 +23,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "winston": "^3.1.0",
-    "winston-slack-webhook-transport": "^2.0.1"
+    "winston": "^3.1.0"
   },
   "devDependencies": {
     "@adonisjs/fold": "^4.0.9",

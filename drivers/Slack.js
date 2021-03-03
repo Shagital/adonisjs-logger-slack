@@ -4,7 +4,7 @@ const Env = require('@adonisjs/framework/src/Env')
 const Config = require('@adonisjs/framework/src/Config')
 const _ = require('lodash')
 const Winston = require('winston')
-const SlackHook = require('winston-slack-webhook-transport')
+const SlackHook = require('../hooks/SlackHook')
 
 /**
  * Winston console transport driver for @ref('Logger')
@@ -35,6 +35,7 @@ class Slack {
     /**
      * Creating new instance of winston with slack transport
      */
+
     this.logger = Winston.createLogger({
       level: this.config.level,
       transports: [
@@ -67,9 +68,10 @@ class Slack {
               // if user doesn't want app start to be logged
               if (!this.config.appStart) {
                 // log to console so user knows app has started
-                console.log(`${level.toUpperCase()} [${process.env.NODE_ENV}] : ${messageString}`)
-                // exit quietly
-                return ''
+                console.log(`${level.toUpperCase()} [${process.env.NODE_ENV}] : ${messageString}`);
+
+                // fail quietly
+                return {};
               }
 
               payload.text = `*${level.toUpperCase()} [${process.env.NODE_ENV}] :* ${messageString}`
@@ -92,9 +94,10 @@ class Slack {
             }
 
             return payload
-          }
+          },
+
         })
-      ]
+      ],
     })
 
     /**
@@ -168,7 +171,10 @@ class Slack {
     const levelName = _.findKey(this.levels, (num) => {
       return num === level
     })
+
+
     this.logger.log(levelName, msg, ...meta)
+
   }
 }
 
