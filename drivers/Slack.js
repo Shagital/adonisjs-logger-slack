@@ -4,7 +4,8 @@ const Env = require('@adonisjs/framework/src/Env')
 const Config = require('@adonisjs/framework/src/Config')
 const _ = require('lodash')
 const Winston = require('winston')
-const SlackHook = require('../hooks/SlackHook')
+const SlackHook = require('../hooks/SlackHook');
+
 
 /**
  * Winston console transport driver for @ref('Logger')
@@ -52,12 +53,22 @@ class Slack {
             let requestAll = typeof request.all === 'function' ? request.all() : null
             let requestHeaders = typeof request.all === 'function' ? request.headers() : null
 
-            let payload = {}
+            let payload = { blocks: [] }
+
+            let text = '';
 
             if (typeof message === 'object') {
               // if an exception was passed
-              payload.text = '*' + level.toUpperCase() + ' [' + process.env.NODE_ENV + ']: *' + `${message.name} ? ${message.name} : ''}` + ' - ' + message.message
-              if (message.stack) payload.text += '\n>```' + message.stack + '```'
+              text = '*' + level.toUpperCase() + ' [' + process.env.NODE_ENV + ']: *' + `${message.name ? ` _${message.name}_ - ` : ' '}` + message.message
+              if (message.stack) text += '\n>```' + message.stack + '```'
+              payload.blocks.push({
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": text
+                }
+              })
+
             } else {
               // if a string was passed
               let messageString = message.toString();
@@ -75,23 +86,78 @@ class Slack {
                 return null;
               }
 
-              payload.text = `*${level.toUpperCase()} [${process.env.NODE_ENV}] :* ${messageString}`
+              text = `*${level.toUpperCase()} [${process.env.NODE_ENV}] :* ${messageString}`
+              payload.blocks.push({
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": text
+                }
+              })
             }
 
             if (requestAll) {
               // let's log the request object if available
-              payload.text += '\n*' + request.method() + '*: `' + request.url() + '` \n>```'
-              payload.text += JSON.stringify(requestAll, null, 4) + '```'
+              text = '\n*' + request.method() + '*: `' + request.url() + '` \n>```'
+              text += JSON.stringify(requestAll, null, 4) + '```'
+
+              payload.blocks.push({
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": text
+                }
+              })
             }
 
             if (requestHeaders) {
               // let's log the request header if available
-              payload.text += '\n*HEADERS: *\n>```' + JSON.stringify(requestHeaders, null, 4) + '```'
+              text = '\n*Headers: *\n>```' + JSON.stringify(requestHeaders, null, 4) + '```'
+
+              payload.blocks.push({
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": text
+                }
+              })
             }
 
             if (Object.keys(info).length) {
               // log any other properties passed
-              payload.text += '\n*Extra: *\n>```' + JSON.stringify(info, null, 4) + '```'
+              text = '\n*Extra: *\n>```' + JSON.stringify(info, null, 4) + '```'
+
+              payload.blocks.push({
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": text
+                }
+              })
+            }
+
+            if (message && message.name) {
+              // if it's a Error instance, log the environment too
+              let envVariables = process.env;
+              let keys = Object.keys(envVariables);
+              // we want to only log env values specified for the app
+              let demarcator = keys.indexOf("_");
+              let newKeys = keys.slice(demarcator + 1);
+
+              let newEnv = {};
+
+              for (let keyName of newKeys) {
+                newEnv[keyName] = envVariables[keyName];
+              }
+
+              text = '\n*Environment: *\n>```' + JSON.stringify(newEnv, null, 4) + '```'
+              payload.blocks.push({
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": text
+                }
+              })
             }
 
             return payload
@@ -172,7 +238,6 @@ class Slack {
     const levelName = _.findKey(this.levels, (num) => {
       return num === level
     })
-
 
     this.logger.log(levelName, msg, ...meta)
 
