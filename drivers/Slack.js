@@ -1,7 +1,5 @@
 'use strict'
 
-const Env = require('@adonisjs/framework/src/Env')
-const Config = require('@adonisjs/framework/src/Config')
 const _ = require('lodash')
 const Winston = require('winston')
 const SlackHook = require('../hooks/SlackHook');
@@ -24,14 +22,8 @@ class Slack {
    *
    * @param  {Object}  config
    */
-  setConfig({
-    name = Config.get('app.logger.slack.driver', 'adonis-app'),
-    driver = Config.get('app.logger.slack.driver', 'slack'),
-    webhookUrl = Config.get('app.logger.slack.webhookUrl', Env.get('SLACK_WEBHOOK_URL')),
-    level = Config.get('app.logger.slack.level', 'info'),
-    appStart = Config.get('app.logger.slack.appStart', false)
-  }) {
-    this.config = { name, driver, webhookUrl, level, appStart }
+  setConfig(config) {
+    this.config = config
 
     /**
      * Creating new instance of winston with slack transport
