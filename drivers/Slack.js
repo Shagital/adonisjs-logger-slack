@@ -36,7 +36,7 @@ class Slack {
           webhookUrl: this.config.webhookUrl,
           name: this.config.name,
           formatter: (info) => {
-            let { message, request = {} } = info
+            let { level, message, request = {} } = info
 
             delete info.message
             delete info.request
