@@ -117,7 +117,7 @@ class Slack {
 
             if (Object.keys(info).length) {
               // log any other properties passed
-              text = '\n*Extra: *\n>```' + JSON.stringify(info, null, 4) + '```'
+              text = '\n*Extra: *\n>```' + JSON.stringify(info, this.getCircularReplacer) + '```'
 
               payload.blocks.push({
                 "type": "section",
@@ -172,6 +172,19 @@ class Slack {
 
     return string;
   }
+
+  getCircularReplacer = () => {
+    const seen = new WeakSet();
+    return (key, value) => {
+      if (typeof value === "object" && value !== null) {
+        if (seen.has(value)) {
+          return;
+        }
+        seen.add(value);
+      }
+      return value;
+    };
+  };
 
   /**
    * A list of available log levels.
