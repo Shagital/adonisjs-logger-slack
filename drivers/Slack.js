@@ -43,7 +43,7 @@ class Slack {
             delete info.level
 
             let requestAll = typeof request.all === 'function' ? request.all() : null
-            let requestHeaders = typeof request.all === 'function' ? request.headers() : null
+            let requestHeaders = typeof request.headers === 'function' ? request.headers() : null
 
             let payload = { blocks: [] }
 
@@ -128,7 +128,7 @@ class Slack {
               })
             }
 
-            if (message && message.name) {
+            if (this.config.logEnv && message && message.name) {
               // if it's a Error instance, log the environment too
               let envVariables = process.env;
               let keys = Object.keys(envVariables);

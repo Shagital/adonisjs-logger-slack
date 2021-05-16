@@ -34,7 +34,8 @@ slack: {
     driver: 'slack',
     webhookUrl: Env.get('SLACK_WEBHOOK_URL'),
     level: 'info',
-    appStart : false // whether to create log when app is starting
+    appStart : false, // whether to create log when app is starting
+    logEnv : false // should send env variables when logging
 }
 ```
 
