@@ -5,7 +5,7 @@
 
 Version [for **Adonis v4**]
 
-This service provider adds Slack as a driver to [Adonis Logger](https://adonisjs.com/docs/4.1/logger).
+This service provider adds [Slack](https://slack.com/integrations) as a driver to [Adonis Logger](https://adonisjs.com/docs/4.1/logger).
 
 This repo is based from https://github.com/pirmax/adonis-logger-rollbar
 
