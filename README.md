@@ -43,7 +43,7 @@ slack: {
 }
 ```
 
-That's it! Now you can use Logger that will send data to Rollbar.
+That's it! Now you can use Logger that will send data to Slack.
 
 ```js
 const Logger = use('Logger')
