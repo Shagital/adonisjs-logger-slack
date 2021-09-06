@@ -67,15 +67,15 @@ class Slack {
 
               if (messageString == 'serving app on http://%s:%s') {
                 messageString = this.formatString(messageString, ['%s', '%s'], [process.env.HOST, process.env.PORT])
-              }
 
-              // if user doesn't want app start to be logged
-              if (!this.config.appStart) {
-                // log to console so user knows app has started
-                console.log(`${level.toUpperCase()} [${process.env.NODE_ENV}] : ${messageString}`);
+                // if user doesn't want app start to be logged
+                if (!this.config.appStart) {
+                  // log to console so user knows app has started
+                  console.log(`${level.toUpperCase()} [${process.env.NODE_ENV}] : ${messageString}`);
 
-                // fail quietly
-                return null;
+                  // fail quietly
+                  return null;
+                }
               }
 
               text = `*${level.toUpperCase()} [${process.env.NODE_ENV}] :* ${messageString}`
