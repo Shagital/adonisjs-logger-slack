@@ -63,7 +63,7 @@ class Slack {
 
             } else {
               // if a string was passed
-              let messageString = message.toString();
+              let messageString = String(message);
 
               if (messageString == 'serving app on http://%s:%s') {
                 messageString = this.formatString(messageString, ['%s', '%s'], [process.env.HOST, process.env.PORT])
